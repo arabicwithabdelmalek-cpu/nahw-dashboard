@@ -70,13 +70,14 @@
 ```bash
 # أمثلة إرشادية من توثيق Supabase؛ تُراجع صياغتها عند التنفيذ.
 # يشير SUPABASE_DB_URL إلى قاعدة مشروع النحو الواضح فقط.
-supabase db dump --remote="$SUPABASE_DB_URL" -f roles.sql --role-only
-supabase db dump --remote="$SUPABASE_DB_URL" -f schema.sql
-supabase db dump --remote="$SUPABASE_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
+supabase db dump --db-url "$SUPABASE_DB_URL" -f roles.sql --role-only
+supabase db dump --db-url "$SUPABASE_DB_URL" -f schema.sql
+supabase db dump --db-url "$SUPABASE_DB_URL" -f data.sql --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
 ```
 
 5. تحقق من وجود ملفات النسخ وأحجامها ومحتواها على نحو آمن، وخزنها مشفّرة في مكان منفصل.
 6. وثّق ما يلزم حفظه خارج التفريغ: **كائنات Storage نفسها** (نسخة قاعدة البيانات تحفظ بياناتها الوصفية لا ملفاتها)، وEdge Functions، وإعدادات Auth/RLS الخاصة والخدمات.
+   - تُراجع كذلك أي تعديلات مخصصة على مخططات `auth` و`storage` (مثل Triggers أو RLS)؛ قد تتطلب نسخًا منفصلة حسب وثائق Supabase، ولا يُفترض أن الملفات الثلاثة تغطي كل شيء.
 7. **اختبر الاستعادة على مشروع مؤقت منفصل بعد موافقة صاحب المشروع**؛ لا تنفّذ استعادة على مشروع الإنتاج للتجربة.
 8. لا تُعلَن النسخة «قابلة للاستعادة» حتى ينجح اختبار مستقل للهيكل والبيانات وسجلات الدخول/المرفقات بالحد المناسب.
 
