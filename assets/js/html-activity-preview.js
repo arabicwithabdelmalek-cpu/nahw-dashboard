@@ -45,7 +45,8 @@
     document.body.style.overflow = instance.previousOverflow;
   }
 
-  function openHtml(html, title, onValidatedEvent) {
+  function openHtml(html, title, onValidatedEvent, options) {
+    var serverDelivery = !!(options && options.delivery === "server");
     if (typeof html !== "string" || !/<!doctype\s+html\b|<html(?:\s|>)/i.test(html)) {
       throw new Error("يلزم ملف HTML مستقل يحتوي على صفحة كاملة.");
     }
@@ -61,7 +62,7 @@
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "معاينة نشاط HTML");
-    overlay.innerHTML = '<div class="hwbar"><button type="button" class="btn ghost sm" data-preview-close>إغلاق</button><strong>معاينة ملف HTML</strong><span class="small muted" data-preview-title></span><span class="activity-preview-status" data-preview-status role="status" aria-live="polite">جارٍ فتح النشاط…</span></div><div class="hwbody"></div><div class="activity-preview-note">معاينة محلية فقط — لا تُحفظ درجات أو محاولات أو ملفات في قاعدة البيانات.</div>';
+    overlay.innerHTML = '<div class="hwbar"><button type="button" class="btn ghost sm" data-preview-close>إغلاق</button><strong>معاينة ملف HTML</strong><span class="small muted" data-preview-title></span><span class="activity-preview-status" data-preview-status role="status" aria-live="polite">جارٍ فتح النشاط…</span></div><div class="hwbody"></div><div class="activity-preview-note">'+(serverDelivery?"نشاط مسند: يلزم تأكيد الخادم قبل اعتبار التسليم محفوظًا.":"معاينة محلية فقط — لا تُحفظ درجات أو محاولات أو ملفات في قاعدة البيانات.")+'</div>';
 
     var iframe = document.createElement("iframe");
     iframe.setAttribute("title", "النشاط التفاعلي المعزول");
@@ -72,6 +73,24 @@
 
     var state = { completed: false, result: false, closed: false };
     var previousOverflow = document.body.style.overflow;
+
+    function deliver(validated) {
+      if (typeof onValidatedEvent !== "function") return;
+      if (!serverDelivery) {
+        try { onValidatedEvent(validated); } catch (ignored) { /* preview is display-only */ }
+        return;
+      }
+      status.textContent = "وصل التسليم. جارٍ انتظار تأكيد الحفظ من الخادم…";
+      Promise.resolve().then(function () {
+        return onValidatedEvent(validated);
+      }).then(function () {
+        if (current && current.overlay === overlay)
+          status.textContent = "أكد الخادم حفظ التسليم.";
+      }).catch(function () {
+        if (current && current.overlay === overlay)
+          status.textContent = "تعذر تأكيد الحفظ. أغلق النشاط وأعد فتحه للمحاولة.";
+      });
+    }
 
     function onMessage(event) {
       if (!current || current.overlay !== overlay || event.source !== iframe.contentWindow) return;
@@ -85,9 +104,7 @@
         if (state.completed) return;
         state.completed = true;
         status.textContent = "وصل إشعار إتمام بدون درجة. لم يُحفظ شيء.";
-        if (typeof onValidatedEvent === "function") {
-          try { onValidatedEvent({kind:"completed",attemptId:attemptId,assignmentId:assignmentId}); } catch (ignored) { /* demo callback cannot affect frame validation */ }
-        }
+        deliver({kind:"completed",attemptId:attemptId,assignmentId:assignmentId});
       } else if (data.type === "EDU_ACTIVITY_RESULT") {
         if (state.result) return;
         if (typeof data.score !== "number" || typeof data.maxScore !== "number" ||
@@ -100,9 +117,7 @@
         state.result = true;
         status.textContent = "وصلت نتيجة تجريبية: " + data.score + " / " +
           data.maxScore + " — لم تُحفظ في المنصة.";
-        if (typeof onValidatedEvent === "function") {
-          try { onValidatedEvent({kind:"result",attemptId:attemptId,assignmentId:assignmentId,score:data.score,maxScore:data.maxScore}); } catch (ignored) { /* demo callback cannot affect frame validation */ }
-        }
+        deliver({kind:"result",attemptId:attemptId,assignmentId:assignmentId,score:data.score,maxScore:data.maxScore});
       }
     }
 
