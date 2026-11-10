@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نموذج نشاط نحوي — معاينة تجريبية</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6f8fc;color:#1b2842;font:16px/1.9 Tahoma,Arial,sans-serif}
+  main{max-width:740px;margin:32px auto;padding:24px}
+  .panel{background:#fff;border:1px solid #e0e6f0;border-radius:18px;padding:26px;margin:18px 0;box-shadow:0 4px 18px #17243d0a}
+  h1{margin:0;font-size:28px}
+  h2{margin:0 0 12px;font-size:19px}
+  .muted{color:#607087}
+  .item{padding:16px;border:1px solid #e0e6f0;border-radius:12px;margin:14px 0}
+  label{display:block;padding:6px;cursor:pointer}
+  input{margin-inline-end:8px}
+  button{border:0;border-radius:10px;background:#244d92;color:white;cursor:pointer;padding:12px 18px;font:inherit;margin:6px 0 6px 8px}
+  button.secondary{background:#edf2fa;color:#244d92}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  #status{padding:10px 0;min-height:35px}
+  @media(max-width:600px){main{padding:12px;margin:0}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="panel">
+    <h1>نشاط نحوي تجريبي</h1>
+    <p class="muted">مثال مستقل لكيفية إرسال حالة الإتمام أو الدرجة من ملف HTML إلى المنصة، دون إنشاء محرك تصحيح داخلها.</p>
+    <p id="learner" class="muted">بانتظار التهيئة من المنصة…</p>
+  </div>
+  <div class="panel">
+    <h2>اختبر فهمك</h2>
+    <div class="item" data-question>
+      <strong>١. ما الفعل في الجملة: «قرأَ الطالبُ الكتابَ»؟</strong>
+      <label><input type="radio" name="q1" value="1"> قرأَ</label>
+      <label><input type="radio" name="q1" value="0"> الطالبُ</label>
+    </div>
+    <div class="item" data-question>
+      <strong>٢. أين المبتدأ في جملة: «العلمُ نورٌ»؟</strong>
+      <label><input type="radio" name="q2" value="1"> العلمُ</label>
+      <label><input type="radio" name="q2" value="0"> نورٌ</label>
+    </div>
+    <button id="submit" disabled>إنهاء الاختبار وإرسال النتيجة</button>
+    <button id="complete" class="secondary" disabled>إرسال إتمام بلا درجة</button>
+    <div id="status" role="status" aria-live="polite"></div>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var session = null, submitted = false;
+  var status = document.getElementById("status");
+  window.addEventListener("message", function (event) {
+    if (event.source !== window.parent || !event.data ||
+        event.data.type !== "EDU_PLATFORM_INIT" || event.data.version !== "1.0" ||
+        typeof event.data.attemptId !== "string" ||
+        typeof event.data.assignmentId !== "string") return;
+    session = { attemptId: event.data.attemptId, assignmentId: event.data.assignmentId };
+    document.getElementById("learner").textContent =
+      "المتعـلّم: " + String((event.data.context || {}).displayName || "زائر تجريبي");
+    document.getElementById("submit").disabled = false;
+    document.getElementById("complete").disabled = false;
+    status.textContent = "النشاط جاهز.";
+  });
+
+  function report(type, extra) {
+    if (!session || submitted) return;
+    submitted = true;
+    document.getElementById("submit").disabled = true;
+    document.getElementById("complete").disabled = true;
+    window.parent.postMessage(Object.assign({
+      type: type, version: "1.0",
+      attemptId: session.attemptId, assignmentId: session.assignmentId,
+      completedAt: new Date().toISOString()
+    }, extra || {}), "*");
+    status.textContent = "أُرسل الحدث إلى نافذة المعاينة. لا تُحفظ أي نتيجة في قاعدة البيانات.";
+  }
+
+  document.getElementById("submit").addEventListener("click", function () {
+    var a = document.querySelector('input[name="q1"]:checked');
+    var b = document.querySelector('input[name="q2"]:checked');
+    if (!a || !b) {
+      status.textContent = "اختر إجابة لكل سؤال أولًا.";
+      return;
+    }
+    var score = Number(a.value) + Number(b.value);
+    report("EDU_ACTIVITY_RESULT", {score: score, maxScore: 2});
+  });
+
+  document.getElementById("complete").addEventListener("click", function () {
+    report("EDU_ACTIVITY_COMPLETED");
+  });
+}());
+</script>
+</body>
+</html>
