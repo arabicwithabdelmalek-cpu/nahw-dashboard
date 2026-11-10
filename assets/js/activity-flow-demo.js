@@ -28,7 +28,7 @@
       return'<div class="card" style="margin-bottom:14px"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px"><div><span class="tag">'+kinds[a.kind]+'</span><h3 style="margin-top:8px">'+esc(a.title)+'</h3><div class="small muted">'+esc(a.className)+'</div></div><b>'+completed+' / '+list.length+' سلّموا</b></div><div class="tblwrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>الطالب</th><th>آخر تسليم</th></tr></thead><tbody>'+
         (list.map(function(p){return'<tr><td>'+esc(p.full_name)+'</td><td>'+mark(latest(a.id,p.id))+'</td></tr>';}).join("")||'<tr><td colspan="2">لا يوجد طلاب.</td></tr>')+'</tbody></table></div></div>';
     }).join("");
-    return'<div class="ph"><div><h1>ربط أنشطة HTML بالفصول</h1><div class="sub">جرّب دورة التكليف والتسليم كاملة قبل إنشاء قاعدة البيانات.</div></div><div class="actions"><a class="btn ghost" href="#/lessons">العودة إلى الدروس</a></div></div>'+banner()+
+    return'<div class="ph"><div><h1>ربط أنشطة HTML بالفصول</h1><div class="sub">جرّب دورة التكليف والتسليم كاملة قبل إنشاء قاعدة البيانات.</div></div><div class="actions"><a class="btn ghost" href="#/lessons">العودة إلى الدروس</a><button class="btn" type="button" data-flow-action="switch-student">تجربة واجهة الطالب</button></div></div>'+banner()+
       (message?'<div class="msg info" style="margin-bottom:14px">'+esc(message)+'</div>':"")+
       '<div class="card" style="margin-bottom:18px"><h2>إسناد نشاط إلى فصل</h2><div class="grid g2" style="margin-top:12px"><div class="field"><label>الفصل</label><select class="inp" id="flowClass">'+options+'</select></div><div class="field"><label>نوع النشاط</label><select class="inp" id="flowKind"><option value="lesson">درس</option><option value="homework">واجب</option><option value="exam">اختبار</option></select></div></div>'+
       '<div class="field"><label>ملف HTML اختياري</label><input class="inp" type="file" id="flowFile" accept=".html,.htm,text/html"><small>بدون ملف سيُستخدم النموذج النحوي الجاهز. الملف الجديد يُقرأ محليًا فقط.</small></div>'+
@@ -39,7 +39,7 @@
     var student=currentStudent();if(!student)return'<div class="card empty">لم يتم ربط حساب الطالب بفصل.</div>';
     var mine=assignments.filter(function(a){return a.classId===student.classId;}),done=mine.filter(function(a){return !!latest(a.id,student.id)}).length;
     var cards=mine.map(function(a){var record=latest(a.id,student.id);return'<div class="card" style="margin-bottom:12px"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div><span class="tag">'+kinds[a.kind]+'</span><h3 style="margin-top:8px">'+esc(a.title)+'</h3><div class="small muted">'+esc(a.className)+'</div></div>'+mark(record)+'</div><div class="actions" style="margin-top:14px"><button type="button" class="btn" data-flow-action="start" data-flow-id="'+esc(a.id)+'">'+(record?"إعادة المحاولة":"بدء النشاط")+'</button></div></div>';}).join("");
-    return'<div class="demo-banner">وضع المعاينة: لا توجد درجات أو حضور رسمي.</div><header class="ptop"><div class="wrap ptop-in"><b>أنشطة HTML التجريبية</b><span class="small muted">'+esc(student.name)+'</span><button class="link small" data-act="logout">خروج</button></div></header><main class="pmain"><div class="wrap"><div class="crumb"><a href="#/">واجباتي القديمة</a> ‹ أنشطة HTML التجريبية</div><div class="ph"><div><h1>أنشطتي الجديدة</h1><div class="sub">أنشطة الفصل المسندة إليك في هذه الجلسة التجريبية.</div></div></div>'+banner()+'<div class="grid g3 kpis" style="margin-bottom:18px"><div class="card kpi"><small>الأنشطة</small><b>'+mine.length+'</b></div><div class="card kpi"><small>مكتملة</small><b>'+done+'</b></div><div class="card kpi"><small>لم تُستكمل</small><b>'+(mine.length-done)+'</b></div></div>'+
+    return'<div class="demo-banner">وضع المعاينة: لا توجد درجات أو حضور رسمي.</div><header class="ptop"><div class="wrap ptop-in"><b>أنشطة HTML التجريبية</b><span class="small muted">'+esc(student.name)+'</span><button class="btn ghost sm" type="button" data-flow-action="switch-teacher">العودة لواجهة المعلم</button><button class="link small" data-act="logout">خروج</button></div></header><main class="pmain"><div class="wrap"><div class="crumb"><a href="#/">واجباتي القديمة</a> ‹ أنشطة HTML التجريبية</div><div class="ph"><div><h1>أنشطتي الجديدة</h1><div class="sub">أنشطة الفصل المسندة إليك في هذه الجلسة التجريبية.</div></div></div>'+banner()+'<div class="grid g3 kpis" style="margin-bottom:18px"><div class="card kpi"><small>الأنشطة</small><b>'+mine.length+'</b></div><div class="card kpi"><small>مكتملة</small><b>'+done+'</b></div><div class="card kpi"><small>لم تُستكمل</small><b>'+(mine.length-done)+'</b></div></div>'+
       (message?'<div class="msg info" style="margin-bottom:14px">'+esc(message)+'</div>':"")+(cards||'<div class="card empty">لم يُسنَد إلى فصلك أي نشاط تجريبي بعد.</div>')+'</div></main>';
   }
   function render(){return role()==="student"?renderStudent():staff()?renderStaff():'<div class="card empty">يرجى تسجيل الدخول.</div>';}
@@ -56,6 +56,21 @@
       assignments.push({id:newId(),classId:c.id,className:c.name,kind:kind,title:item.title,html:item.html});
       chosenFile=null;message="أُسنِد النشاط إلى فصل «"+c.name+"» في المعاينة فقط.";refresh();
     }).catch(function(e){problem(e.message||"تعذر الإسناد.");});
+  }
+  function switchRole(target){
+    var app=win.NahwApp,api=app&&app.API;
+    if(!api||!api.demo||!state()||(target!=="student"&&target!=="teacher"))return;
+    if(target==="student"&&!staff())return;
+    if(target==="teacher"&&role()!=="student")return;
+    api.signOut().then(function(){return api.signIn("","",target);}).then(function(){return api.me();}).then(function(me){
+      if(!me||me.role!==target)throw Error("تعذر تبديل دور المعاينة.");
+      state().me=me;state().data=null;state().portal=null;
+      return target==="student"?api.portal().then(function(portal){state().portal=portal;}):
+        api.loadAll().then(function(data){state().data=data;});
+    }).then(function(){
+      message=target==="student"?"أنت الآن في واجهة الطالب التجريبية.":"عُدتَ إلى واجهة المعلم التجريبية.";
+      win.location.hash="#/activity-demo";refresh();
+    }).catch(function(e){problem(e&&e.message||"تعذر تبديل دور المعاينة.");});
   }
   function start(button){
     var student=currentStudent();if(!student)return;
@@ -77,6 +92,8 @@
     e.preventDefault();e.stopPropagation();
     if(button.dataset.flowAction==="assign")assign();
     if(button.dataset.flowAction==="start")start(button);
+    if(button.dataset.flowAction==="switch-student")switchRole("student");
+    if(button.dataset.flowAction==="switch-teacher")switchRole("teacher");
   });
   doc.addEventListener("change",function(e){
     var fileInput=e.target;
