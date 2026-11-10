@@ -45,7 +45,7 @@
     document.body.style.overflow = instance.previousOverflow;
   }
 
-  function openHtml(html, title) {
+  function openHtml(html, title, onValidatedEvent) {
     if (typeof html !== "string" || !/<!doctype\s+html\b|<html(?:\s|>)/i.test(html)) {
       throw new Error("يلزم ملف HTML مستقل يحتوي على صفحة كاملة.");
     }
@@ -85,6 +85,9 @@
         if (state.completed) return;
         state.completed = true;
         status.textContent = "وصل إشعار إتمام بدون درجة. لم يُحفظ شيء.";
+        if (typeof onValidatedEvent === "function") {
+          try { onValidatedEvent({kind:"completed",attemptId:attemptId,assignmentId:assignmentId}); } catch (ignored) { /* demo callback cannot affect frame validation */ }
+        }
       } else if (data.type === "EDU_ACTIVITY_RESULT") {
         if (state.result) return;
         if (typeof data.score !== "number" || typeof data.maxScore !== "number" ||
@@ -97,6 +100,9 @@
         state.result = true;
         status.textContent = "وصلت نتيجة تجريبية: " + data.score + " / " +
           data.maxScore + " — لم تُحفظ في المنصة.";
+        if (typeof onValidatedEvent === "function") {
+          try { onValidatedEvent({kind:"result",attemptId:attemptId,assignmentId:assignmentId,score:data.score,maxScore:data.maxScore}); } catch (ignored) { /* demo callback cannot affect frame validation */ }
+        }
       }
     }
 
