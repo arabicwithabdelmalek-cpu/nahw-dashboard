@@ -1,0 +1,2 @@
+/* Public client configuration: the anon key is intentionally public. Never put service_role here. */
+window.NAHW_CONFIG={supabaseUrl:"https://vkjkkezuyhhlcrxlvdbr.supabase.co",supabaseKey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZramtrZXp1eWhobGNyeGx2ZGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODM4ODEsImV4cCI6MjEwOTc1OTg4MX0.lBGT6ZiDTTwyUv8wqeo40-pgRkxvByIYWKd8KmnhitE"};
