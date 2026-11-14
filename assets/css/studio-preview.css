@@ -129,7 +129,7 @@ html[data-design="studio"] .modal .foot{padding-top:12px;border-top:1px solid va
 html[data-design="studio"] .rolepick button{background:#fff;border-color:#e2e9df;color:#65806a}
 html[data-design="studio"] .rolepick button.on{background:#e9f3e7;border-color:#7eac8d;color:#2a6445}
 html[data-design="studio"] .drop{border:1.5px dashed #b5cbbc;background:#fafcf8;color:#6f8472;border-radius:17px;padding:30px}
-html[data-design="studio"] .drop:hover,.html[data-design="studio"] .drop.over{background:#eaf4e8;border-color:#76a584;color:#2b6247}
+html[data-design="studio"] .drop:hover,html[data-design="studio"] .drop.over{background:#eaf4e8;border-color:#76a584;color:#2b6247}
 html[data-design="studio"] .filters{gap:7px}
 html[data-design="studio"] .filters .btn{box-shadow:none}
 html[data-design="studio"] .login{min-height:100dvh;background:linear-gradient(110deg,#e7f0e4,#f7f7f0 47%,#f4f1e8);position:relative;overflow:hidden}
