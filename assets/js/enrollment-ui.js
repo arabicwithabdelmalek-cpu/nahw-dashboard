@@ -298,5 +298,5 @@
   }
   window.addEventListener("hashchange",addShortcut);
   addShortcut();
-  window.NahwEnrollmentUI=Object.freeze({close:close,version:"3.0"});
+  window.NahwEnrollmentUI=Object.freeze({close:close,openClass:classForm,openStudents:studentForm,version:"3.1"});
 }(window,document));
