@@ -288,7 +288,7 @@
           if (identity === cache.identity) report(error);
           throw error;
         });
-      }, {delivery:"server"});
+      }, {delivery:"server", context:{displayName:(state() && state().me && state().me.full_name) || "الطالب"}});
     } catch (error) { if (identity === cache.identity) report(error); }
   }
   document.addEventListener("click", function(e){
