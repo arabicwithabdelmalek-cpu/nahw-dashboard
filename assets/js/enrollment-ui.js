@@ -44,7 +44,7 @@
     close(true);
     priorOverflow=document.body.style.overflow;beforeOpen=focusedElement();
     var overlay=document.createElement("div");
-    overlay.className="enroll-overlay enroll-v3";
+    overlay.className="enroll-overlay enroll-v3"+(opts.wide?" enroll-wide":"");
     overlay.innerHTML='<section class="enroll-dialog" role="dialog" aria-modal="true" aria-labelledby="enroll-title" aria-describedby="enroll-subtitle">'+
       '<header class="enroll-head"><div class="enroll-heading">'+
       '<div class="enroll-eyebrow">'+esc(opts.eyebrow||"إدارة الفصول والطلاب")+'</div>'+
@@ -219,7 +219,7 @@
   }
   function row(index){
     return '<div class="enroll-person-row"><span class="enroll-person-no">'+(index+1)+'</span>'+
-      '<div class="enroll-row-inputs"><input class="inp" name="bulkName" placeholder="اسم الطالب" aria-label="اسم الطالب" maxlength="140" required>'+
+      '<div class="enroll-row-inputs"><input class="inp" name="bulkName" placeholder="اسم الطالب" aria-label="اسم الطالب" maxlength="140">'+
       '<input class="inp" name="bulkEmail" type="email" aria-label="بريد الطالب" placeholder="البريد (اختياري)" maxlength="254" dir="ltr"></div>'+
       '<button type="button" class="enroll-remove" data-remove-row aria-label="حذف هذا الصف" title="حذف الصف">×</button></div>';
   }
@@ -228,7 +228,7 @@
     if(!classes().some(function(c){return c.id===classId;}))return toast("الفصل غير موجود.");
     var cls=classes().find(function(c){return c.id===classId;});
     var box=modal({eyebrow:"الطلاب",title:"إضافة مجموعة طلاب",subtitle:"بيانات واضحة لكل طالب، بدون كتابة سطور معقدة.",
-      body:'<div class="enroll-context"><span class="enroll-context-label">الفصل</span><strong>'+esc(cls.name)+'</strong></div>'+
+      wide:true,body:'<div class="enroll-context"><span class="enroll-context-label">الفصل</span><strong>'+esc(cls.name)+'</strong></div>'+
         '<div class="enroll-people-head"><span>الطلاب</span><span>حتى '+limit+' طالبًا في المرة</span></div>'+
         '<div class="enroll-rows">'+row(0)+row(1)+'</div>'+
         '<button type="button" class="enroll-add-row" data-add-row>+ إضافة صف آخر</button>'+
@@ -290,7 +290,7 @@
     if(act==="newClass")classForm(null);
     else if(act==="editClass")classForm(target.dataset.id);
     else if(act==="addStudents")studentForm(target.dataset.id);
-    else studentForm(null);
+    else studentForm(classes().length===1?classes()[0].id:null);
   },true);
   if(typeof window.MutationObserver==="function"){
     var root=document.getElementById("app");
