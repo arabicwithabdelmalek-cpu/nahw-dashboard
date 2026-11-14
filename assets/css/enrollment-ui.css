@@ -1,0 +1,52 @@
+/* Class and student enrollment: responsive, isolated from legacy modals. */
+.enroll-overlay{position:fixed;inset:0;z-index:100;background:rgba(21,34,52,.43);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;animation:fade .16s ease-out}
+.enroll-dialog{width:min(100%,620px);max-height:calc(100dvh - 36px);display:flex;flex-direction:column;min-width:0;background:var(--card,#fff);border:1px solid var(--line,#e4e8ee);border-radius:22px;box-shadow:0 26px 80px rgba(10,23,47,.20);overflow:hidden;animation:pop .18s ease-out}
+.enroll-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:26px 28px 20px;border-bottom:1px solid var(--line)}
+.enroll-head h2{font-size:21px;font-weight:800;line-height:1.65;margin:0}
+.enroll-head p{font-size:13.5px;line-height:1.85;color:var(--muted);margin-top:2px}
+.enroll-close{width:36px;height:36px;flex:none;border:1px solid var(--line);border-radius:11px;background:var(--bg);font-size:27px;line-height:1;color:var(--muted)}
+.enroll-close:hover{color:var(--ink)}
+.enroll-form{min-height:0;display:flex;flex-direction:column;flex:1}
+.enroll-body{overflow:auto;overscroll-behavior:contain;padding:23px 28px 22px;min-height:0}
+.enroll-field{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.enroll-field label:not(.enroll-choice),.enroll-label{font-size:14px;font-weight:800;color:var(--ink)}
+.enroll-field small{font-size:12.5px;line-height:1.85;color:var(--muted)}
+.enroll-field .inp{min-height:48px;border-radius:12px;padding:11px 15px;font-size:14.5px}
+.enroll-field .inp:focus{outline:3px solid color-mix(in srgb,var(--accent) 14%,transparent);outline-offset:1px}
+.enroll-choice-row{display:flex;gap:10px;flex-wrap:wrap}
+.enroll-choice{position:relative;display:flex;flex:1;align-items:center;min-width:130px;border:1.5px solid var(--line);border-radius:13px;padding:11px 14px;cursor:pointer;background:var(--card);font-size:14px;font-weight:700}
+.enroll-choice:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.enroll-choice input{accent-color:var(--accent);margin-inline-end:9px;width:17px;height:17px}
+.enroll-tip{font-size:13px;line-height:1.9;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:12px 15px;border-radius:13px}
+.enroll-footer{display:flex;gap:9px;padding:17px 28px 22px;border-top:1px solid var(--line);background:var(--card);flex-shrink:0;flex-wrap:wrap}
+.enroll-footer .btn{min-height:44px}
+.enroll-footer .enroll-primary{min-width:145px}
+.enroll-footer .btn:disabled{opacity:.6;cursor:wait}
+.enroll-error{margin:0 28px 10px;border:1px solid var(--bad);border-radius:11px;background:var(--bad-soft);color:var(--bad);font-size:13px;line-height:1.8;padding:10px 14px}
+.enroll-mode{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;background:var(--bg);padding:5px;border-radius:14px;margin-bottom:23px}
+.enroll-mode-btn{background:transparent;border:0;border-radius:11px;padding:12px;color:var(--muted);font-weight:750}
+.enroll-mode-btn.active{background:var(--card);color:var(--ink);box-shadow:0 1px 6px rgba(25,37,60,.1)}
+.enroll-multi{min-height:185px!important;line-height:2!important;white-space:pre-wrap}
+.enroll-check{display:flex;align-items:flex-start;gap:10px;line-height:1.9;cursor:pointer;font-size:13px;font-weight:650;margin-bottom:15px}
+.enroll-check input{accent-color:var(--accent);width:17px;height:17px;flex:none;margin-top:7px}
+.enroll-results{display:grid;gap:9px;max-height:43vh;overflow:auto;margin:15px 0}
+.enroll-result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 9px;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.enroll-result strong{font-size:13.5px;overflow-wrap:anywhere}
+.enroll-result small,.enroll-result code{grid-column:1/-1;overflow-wrap:anywhere;font-size:12px}
+.enroll-result .enroll-status{font-size:11px;font-weight:700;border-radius:99px;padding:3px 8px;max-width:200px;align-self:start}
+.enroll-status.good{background:var(--ok-soft);color:var(--ok)}
+.enroll-status.bad{background:var(--bad-soft);color:var(--bad)}
+.enroll-result code{background:var(--bg);border-radius:7px;padding:6px 9px;direction:ltr;text-align:left}
+.enroll-copy{margin-top:5px}
+.enroll-overlay [hidden]{display:none!important}
+@media(max-width:600px){
+ .enroll-overlay{padding:0;align-items:end}
+ .enroll-dialog{width:100%;max-height:95dvh;border-radius:22px 22px 0 0}
+ .enroll-head{padding:19px 19px 15px}
+ .enroll-head h2{font-size:19px}
+ .enroll-body{padding:19px}
+ .enroll-footer{padding:14px 19px calc(16px + env(safe-area-inset-bottom))}
+ .enroll-footer .btn{flex:1}
+ .enroll-choice{min-width:120px}
+ .enroll-error{margin:0 19px 9px}
+}
