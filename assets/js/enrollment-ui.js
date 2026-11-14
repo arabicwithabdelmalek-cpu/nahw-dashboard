@@ -275,6 +275,45 @@
     });
   }
 
+  function quickAddStudent() {
+    if (!classes().length) {
+      showToast("أنشئ فصلًا أولًا قبل إضافة الطلاب.");
+      window.location.hash="#/classes";
+      return;
+    }
+    if(classes().length===1){studentsForm(classes()[0].id);return;}
+    var options=classes().map(function(cl){
+      return '<option value="'+esc(cl.id)+'">'+esc(cl.name)+'</option>';
+    }).join("");
+    modal("اختيار الفصل","حدد الفصل الذي سيلتحق به الطالب.",
+      '<div class="enroll-field"><label for="enroll-quick-class">الفصل</label><select class="inp" name="classId" id="enroll-quick-class" required>'+options+'</select></div>',
+      "متابعة",async function(form){studentsForm(String(new FormData(form).get("classId")));});
+  }
+  function showStudentQuickAction() {
+    if(!staff() || window.location.hash.split("?")[0]!=="#/students")return;
+    var parent=document.querySelector(".main .wrap .ph .actions");
+    if(!parent || parent.querySelector("[data-enroll-quick]"))return;
+    var add=document.createElement("button");
+    add.type="button";
+    add.className="btn";
+    add.dataset.enrollQuick="true";
+    add.textContent="إضافة طالب";
+    parent.insertBefore(add,parent.firstChild);
+  }
+  document.addEventListener("click",function(event){
+    var quick=event.target.closest&&event.target.closest("[data-enroll-quick]");
+    if(!quick || !staff())return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    quickAddStudent();
+  },true);
+  if(typeof window.MutationObserver==="function"){
+    var root=document.getElementById("app");
+    if(root)new window.MutationObserver(showStudentQuickAction).observe(root,{childList:true,subtree:true});
+  }
+  window.addEventListener("hashchange",showStudentQuickAction);
+  showStudentQuickAction();
+
   document.addEventListener("click",function(event){
     if (!staff()) return;
     var btn=event.target.closest && event.target.closest("[data-act]");
