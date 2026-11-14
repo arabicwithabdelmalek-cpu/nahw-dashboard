@@ -30,7 +30,10 @@ function fixture(role, flag) {
     EduActivityPersistence:{maxHtmlBytes:1048576},
     location:{hash:"#/activity-live"},
     NahwApp:{S:s,API:{activities:service},refresh:()=>{rendered=W.EduActivityLive.view();}},
-    EduActivityPreview:{openHtml:(html,title,fn,opts)=>{callback={fn,opts};}}
+    EduActivityPreview:{
+      openHtml:(html,title,fn,opts)=>{callback={fn,opts};},
+      openFile:async(file)=>{calls.push(["preview",file.name]);}
+    }
   };
   const D = {
     addEventListener:(event,fn)=>{(handlers[event]||(handlers[event]=[])).push(fn)},
@@ -66,7 +69,7 @@ test("teacher loads assignments and shows safely escaped server strings",async()
   };
   f.render();
   await f.flush();
-  assert.match(f.last(),/إسناد نشاط HTML جديد/);
+  assert.match(f.last(),/رفع محتوى جديد/);
   assert.match(f.last(),/&lt;img/);
   assert.doesNotMatch(f.last(),/<img src=x/);
 });
@@ -86,6 +89,21 @@ test("teacher publish sends a bounded request through RPC adapter only",async()=
   assert.equal(item[1].classId,"class-1");
   assert.equal(item[1].kind,"exam");
   assert.equal(item[1].title,"امتحان قصير");
+});
+
+test("lessons page accepts preview and publish actions from the integrated hub",async()=>{
+  const f=fixture("teacher",true);
+  f.W.location.hash="#/lessons";
+  f.render();await f.flush();
+  const file={name:"lesson.html",size:80,text:async()=>"<html><body>Lesson</body></html>"};
+  Object.assign(f.fields,{
+    liveClass:{value:"class-1"},liveKind:{value:"lesson"},
+    liveTitle:{value:"درس المثنى"},liveFile:{files:[file]}
+  });
+  f.click("preview");await f.flush();
+  f.click("publish");await f.flush();
+  assert.ok(f.calls.some(x=>Array.isArray(x)&&x[0]==="preview"));
+  assert.ok(f.calls.some(x=>Array.isArray(x)&&x[0]==="publish"));
 });
 
 test("teacher cannot publish to a class outside owned list",async()=>{

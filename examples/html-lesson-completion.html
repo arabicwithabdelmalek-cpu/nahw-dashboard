@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>درس تجريبي — إتمام بلا درجة</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#14213d;font:16px/1.9 Tahoma,Arial,sans-serif}main{max-width:720px;margin:auto;padding:24px}.lesson{background:#fff;border:1px solid #e3e8f0;border-radius:20px;padding:28px}h1{margin:0 0 8px;font-size:27px}h2{font-size:19px;margin:24px 0 6px}.note{color:#5d6b86}.example{background:#e8effe;border-radius:14px;padding:14px 18px;font-size:19px}button{width:100%;margin-top:24px;border:0;border-radius:12px;background:#2563eb;color:#fff;padding:13px 18px;font:700 15px inherit;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}#status{min-height:30px;margin-top:10px;color:#15803d}@media(max-width:600px){main{padding:12px}.lesson{padding:19px}}
+</style>
+</head>
+<body>
+<main><article class="lesson"><h1>المثنّى</h1><p class="note">نموذج لدرس يرسل إلى المنصة حالة الإتمام فقط، من غير درجة.</p><h2>الفكرة</h2><p>المثنّى اسم يدل على اثنين أو اثنتين بزيادة ألف ونون، أو ياء ونون.</p><div class="example">حضرَ الطالبانِ — رأيتُ الطالبينِ.</div><button id="finish" disabled>أنهيت الدرس</button><p id="status" role="status" aria-live="polite">بانتظار التهيئة من المنصة…</p></article></main>
+<script>
+(function(){"use strict";var session=null,sent=false,button=document.getElementById("finish"),status=document.getElementById("status");window.addEventListener("message",function(event){var data=event.data;if(event.source!==window.parent||!data||data.type!=="EDU_PLATFORM_INIT"||data.version!=="1.0"||typeof data.attemptId!=="string"||typeof data.assignmentId!=="string")return;session={attemptId:data.attemptId,assignmentId:data.assignmentId};button.disabled=false;status.textContent="الدرس جاهز."});button.addEventListener("click",function(){if(!session||sent)return;sent=true;button.disabled=true;window.parent.postMessage({type:"EDU_ACTIVITY_COMPLETED",version:"1.0",attemptId:session.attemptId,assignmentId:session.assignmentId,completedAt:new Date().toISOString()},"*");status.textContent="أُرسل إتمام الدرس إلى المنصة."})}());
+</script>
+</body>
+</html>

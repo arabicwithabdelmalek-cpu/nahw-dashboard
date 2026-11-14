@@ -12,6 +12,13 @@
   };
   var labels = {lesson:"درس",homework:"واجب",exam:"اختبار"};
 
+  function currentPath() {
+    return window.location.hash.split("?")[0] || "#/";
+  }
+  function onActivityRoute() {
+    return currentPath() === "#/activity-live" || currentPath() === "#/lessons";
+  }
+
   function escapeText(x) {
     return String(x == null ? "" : x).replace(/[&<>"']/g, function(c) {
       return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
@@ -38,7 +45,7 @@
     return row && (row.assignment_id || row.id);
   }
   function reloadPage() {
-    if (window.location.hash.split("?")[0] === "#/activity-live" &&
+    if (onActivityRoute() &&
         app() && typeof app().refresh === "function") app().refresh();
   }
   function syncIdentity() {
@@ -101,9 +108,12 @@
     reloadPage();
   }
 
-  function renderHeader() {
-    return '<div class="ph"><div><h1>الأنشطة المحفوظة</h1><div class="sub">إسناد ملفات HTML، متابعة التسليمات والنتائج المرتبطة بالحسابات.</div></div>' +
-      '<div class="actions"><a href="#/lessons" class="btn ghost">العودة إلى الدروس</a></div></div>';
+  function renderHeader(embedded) {
+    return '<div class="activity-hub-head"><div><span class="activity-hub-kicker">المحتوى التفاعلي</span>' +
+      '<h1>' + (embedded ? 'الدروس والمحتوى' : 'الأنشطة المحفوظة') + '</h1>' +
+      '<p>ارفع ملف HTML، أسنده إلى الفصل، ثم تابع الإكمال والنتائج من مكان واحد.</p></div>' +
+      (embedded ? '<div class="activity-flow" aria-label="خطوات نشر النشاط"><span><b>١</b> ارفع</span><span><b>٢</b> أسند</span><span><b>٣</b> تابع</span></div>' :
+        '<a href="#/lessons" class="btn ghost">العودة إلى الدروس</a>') + '</div>';
   }
   function renderNotice() {
     return cache.notice ? '<div class="msg info" role="status" style="margin-bottom:14px">' +
@@ -125,16 +135,19 @@
         (cl.id === cache.classId ? ' selected' : '') + '>' +
         escapeText(cl.name) + '</option>';
     }).join("");
-    return '<div class="card" style="margin-bottom:18px"><h2>إسناد نشاط HTML جديد</h2>' +
-      '<p class="small muted">ترفع ملف HTML مستقلًا؛ يفحص الخادم صلاحيتك قبل حفظه أو إسناده.</p>' +
-      '<div class="grid g2"><div class="field"><label for="liveClass">الفصل</label><select class="inp" id="liveClass">' +
-      options + '</select></div>' +
-      '<div class="field"><label for="liveKind">نوع النشاط</label><select class="inp" id="liveKind"><option value="lesson">درس</option><option value="homework">واجب</option><option value="exam">اختبار</option></select></div></div>' +
-      '<div class="field"><label for="liveTitle">عنوان النشاط</label><input class="inp" id="liveTitle" maxlength="140" placeholder="اكتب عنوان الدرس أو الواجب"></div>' +
-      '<div class="field"><label for="liveFile">ملف HTML</label><input class="inp" id="liveFile" type="file" accept=".html,.htm,text/html"><small>ملف واحد مكتفٍ بذاته، أقصاه ١ ميجابايت.</small></div>' +
+    return '<section class="activity-publish"><div class="activity-publish-copy"><span class="activity-step-number">١</span>' +
+      '<div><h2>رفع محتوى جديد</h2><p>ملف HTML واحد مكتفٍ بذاته، بلا مفاتيح أو اتصال مباشر بقاعدة البيانات.</p></div></div>' +
+      '<div class="activity-form-grid"><div class="field activity-title-field"><label for="liveTitle">عنوان المحتوى</label>' +
+      '<input class="inp" id="liveTitle" maxlength="140" placeholder="مثال: علامات إعراب المثنى"></div>' +
+      '<div class="field"><label for="liveKind">النوع</label><select class="inp" id="liveKind"><option value="lesson">درس</option><option value="homework">واجب</option><option value="exam">اختبار</option></select></div>' +
+      '<div class="field"><label for="liveClass">الفصل</label><select class="inp" id="liveClass">' +
+      options + '</select></div></div>' +
+      '<label class="activity-file" for="liveFile"><strong>اختر ملف HTML</strong><span>ملف .html أو .htm — الحد الأقصى ١ ميجابايت</span>' +
+      '<input id="liveFile" type="file" accept=".html,.htm,text/html"></label>' +
+      '<div class="activity-publish-actions"><button class="btn ghost" type="button" data-live-action="preview">معاينة الملف</button>' +
       '<button class="btn" type="button" data-live-action="publish"' +
       (!cache.classId || cache.busy ? ' disabled' : '') +
-      '>' + (cache.busy ? 'جارٍ الحفظ…' : 'حفظ وإسناد إلى الفصل') + '</button></div>';
+      '>' + (cache.busy ? 'جارٍ الحفظ…' : 'حفظ وإسناد إلى الفصل') + '</button></div></section>';
   }
   function staffView() {
     var rows = cache.assignments.map(function(a){
@@ -152,19 +165,20 @@
             '</td></tr>';
         }).join("") || '<tr><td colspan="2">لا توجد نتائج بعد.</td></tr>') +
         '</tbody></table></div>' : "";
-      return '<div class="card" style="margin-bottom:14px"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">' +
-        '<div><span class="tag">' + escapeText(kind) + '</span><h3 style="margin-top:8px">' +
-        escapeText(a.title) + '</h3></div><button class="btn ghost sm" type="button" data-live-action="results" data-live-id="' +
-        escapeText(aid) + '">عرض نتائج الطلاب</button></div>' + resultTable + '</div>';
+      return '<article class="activity-row"><div class="activity-row-main"><span class="tag">' + escapeText(kind) +
+        '</span><div><h3>' + escapeText(a.title) + '</h3><p>مسند إلى الفصل المحدد</p></div></div>' +
+        '<button class="btn ghost sm" type="button" data-live-action="results" data-live-id="' +
+        escapeText(aid) + '">عرض النتائج</button>' + resultTable + '</article>';
     }).join("");
     var classesSelect = classes().map(function(cl){
       return '<option value="' + escapeText(cl.id) + '"' +
         (cl.id === cache.classId ? ' selected' : '') + '>' + escapeText(cl.name) + '</option>';
     }).join("");
-    return '<div class="field" style="max-width:400px;margin-bottom:16px"><label for="liveFilterClass">الفصل المعروض</label>' +
-      '<select id="liveFilterClass" class="inp">' + classesSelect + '</select></div>' + form() +
-      '<h2 class="sec-t">التكليفات المحفوظة (' + cache.assignments.length + ')</h2>' +
-      (rows || '<div class="card empty">لا توجد تكليفات محفوظة لهذا الفصل.</div>');
+    return form() + '<section class="activity-library"><div class="activity-library-head"><div><span class="activity-step-number">٢</span>' +
+      '<div><h2>المحتوى المنشور</h2><p>' + cache.assignments.length + ' محتوى في الفصل الحالي</p></div></div>' +
+      '<label for="liveFilterClass"><span>الفصل المعروض</span><select id="liveFilterClass" class="inp">' +
+      classesSelect + '</select></label></div>' +
+      (rows || '<div class="activity-empty"><b>لا يوجد محتوى منشور لهذا الفصل</b><span>ارفع أول ملف من النموذج الموجود بالأعلى.</span></div>') + '</section>';
   }
   function studentView() {
     var rows = cache.assignments.map(function(a){
@@ -178,7 +192,8 @@
     return '<h2 class="sec-t">أنشطتي المسندة (' + cache.assignments.length + ')</h2>' +
       (rows || '<div class="card empty">لا توجد أنشطة مسندة لحسابك حاليًا.</div>');
   }
-  function view() {
+  function view(options) {
+    var embedded = !!(options && options.embedded);
     syncIdentity();
     if (!enabled() || !state() || !state().me) {
       return '<div class="card empty">نظام الحفظ الرسمي لم يُفعّل بعد.</div>';
@@ -187,7 +202,7 @@
       cache.phase = "loading";
       Promise.resolve().then(fetchAssignments);
     }
-    var body = renderHeader() + renderNotice() +
+    var body = renderHeader(embedded) + renderNotice() +
       (cache.phase === "ready" ? (staff() ? staffView() : studentView()) : renderStatus());
     if (currentRole() === "student") {
       return '<header class="ptop"><div class="wrap ptop-in"><b>' +
@@ -226,6 +241,11 @@
       cache.busy = false;
       invalidate();
     } catch (error) { if (identity === cache.identity) report(error); }
+  }
+  function previewSelectedFile() {
+    var input = getInput("liveFile"), file = input && input.files && input.files[0];
+    if (!file) return report(new Error("اختر ملف HTML أولًا ثم افتح المعاينة."));
+    window.EduActivityPreview.openFile(file).catch(report);
   }
   async function showResults(assignmentId) {
     if (!staff() || cache.phase !== "ready" || !enabled()) return;
@@ -273,11 +293,12 @@
   }
   document.addEventListener("click", function(e){
     var button = e.target && e.target.closest && e.target.closest("[data-live-action]");
-    if (!button || window.location.hash.split("?")[0] !== "#/activity-live" || !enabled()) return;
+    if (!button || !onActivityRoute() || !enabled()) return;
     e.preventDefault();
     e.stopPropagation();
     var act = button.dataset.liveAction;
     if (act === "publish") publish();
+    if (act === "preview") previewSelectedFile();
     if (act === "start") start(button.dataset.liveId);
     if (act === "results") showResults(button.dataset.liveId);
     if (act === "retry") {
@@ -290,10 +311,41 @@
   document.addEventListener("change", function(e){
     var el = e.target;
     if (!el || el.id !== "liveFilterClass" || !staff() || !enabled() ||
-        window.location.hash.split("?")[0] !== "#/activity-live") return;
+        !onActivityRoute()) return;
     if (!classes().some(function(c){return c.id === el.value;})) return;
     cache.classId = el.value;
     invalidate();
   });
-  window.EduActivityLive = Object.freeze({view:view,enabled:enabled});
+  function mountInsideLessons() {
+    if (currentPath() !== "#/lessons" || !enabled() || !staff() ||
+        typeof document.querySelector !== "function" || typeof document.createElement !== "function") return;
+    var root = document.querySelector(".main .wrap");
+    if (!root || root.dataset.activityHubReady === "true") return;
+    root.dataset.activityHubReady = "true";
+
+    var oldOfficialLink = root.querySelector('a[href="#/activity-live"]');
+    if (oldOfficialLink && oldOfficialLink.closest(".msg")) oldOfficialLink.closest(".msg").remove();
+
+    var hub = document.createElement("section");
+    hub.className = "activity-hub";
+    hub.setAttribute("aria-label", "إدارة الدروس التفاعلية");
+    hub.innerHTML = view({embedded:true});
+
+    var legacy = document.createElement("details");
+    legacy.className = "legacy-lessons";
+    legacy.innerHTML = '<summary><span><b>المكتبة القديمة</b><small>واجبات النحو السابقة والملفات التجريبية</small></span><span class="legacy-lessons-action">عرض</span></summary><div class="legacy-lessons-body"></div>';
+    var legacyBody = legacy.querySelector(".legacy-lessons-body");
+    Array.prototype.slice.call(root.childNodes).forEach(function(node){ legacyBody.appendChild(node); });
+    root.appendChild(hub);
+    root.appendChild(legacy);
+  }
+
+  if (typeof window.MutationObserver === "function" && typeof document.getElementById === "function") {
+    var appRoot = document.getElementById("app");
+    if (appRoot) new window.MutationObserver(mountInsideLessons).observe(appRoot,{childList:true,subtree:true});
+  }
+  if (typeof window.addEventListener === "function") {
+    window.addEventListener("hashchange", function(){ Promise.resolve().then(mountInsideLessons); });
+  }
+  window.EduActivityLive = Object.freeze({view:view,enabled:enabled,mountInsideLessons:mountInsideLessons});
 }(window, document));

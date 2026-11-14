@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تدريب تجريبي — نتيجة تلقائية</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#14213d;font:16px/1.9 Tahoma,Arial,sans-serif}main{max-width:720px;margin:auto;padding:24px}.panel{background:#fff;border:1px solid #e3e8f0;border-radius:20px;padding:28px}h1{margin:0 0 8px;font-size:27px}.note{color:#5d6b86}.question{margin-top:20px;padding:17px;border:1px solid #e3e8f0;border-radius:14px}.question b{display:block;margin-bottom:8px}label{display:block;padding:6px;cursor:pointer}input{margin-inline-end:8px}button{width:100%;margin-top:22px;border:0;border-radius:12px;background:#2563eb;color:#fff;padding:13px 18px;font:700 15px inherit;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}#status{min-height:30px;margin-top:10px;color:#15803d}@media(max-width:600px){main{padding:12px}.panel{padding:19px}}
+</style>
+</head>
+<body>
+<main><section class="panel"><h1>تدريب قصير</h1><p class="note">نموذج لتدريب يصحح نفسه ثم يرسل الدرجة إلى المنصة.</p><div class="question"><b>ما علامة رفع المثنّى؟</b><label><input type="radio" name="q1" value="1"> الألف</label><label><input type="radio" name="q1" value="0"> الياء</label></div><div class="question"><b>اختر المثنّى المجرور:</b><label><input type="radio" name="q2" value="0"> الطالبانِ</label><label><input type="radio" name="q2" value="1"> الطالبينِ</label></div><button id="submit" disabled>إرسال الإجابات</button><p id="status" role="status" aria-live="polite">بانتظار التهيئة من المنصة…</p></section></main>
+<script>
+(function(){"use strict";var session=null,sent=false,button=document.getElementById("submit"),status=document.getElementById("status");window.addEventListener("message",function(event){var data=event.data;if(event.source!==window.parent||!data||data.type!=="EDU_PLATFORM_INIT"||data.version!=="1.0"||typeof data.attemptId!=="string"||typeof data.assignmentId!=="string")return;session={attemptId:data.attemptId,assignmentId:data.assignmentId};button.disabled=false;status.textContent="التدريب جاهز."});button.addEventListener("click",function(){if(!session||sent)return;var first=document.querySelector('input[name="q1"]:checked'),second=document.querySelector('input[name="q2"]:checked');if(!first||!second){status.textContent="أجب عن السؤالين أولًا.";return}sent=true;button.disabled=true;var score=Number(first.value)+Number(second.value);window.parent.postMessage({type:"EDU_ACTIVITY_RESULT",version:"1.0",attemptId:session.attemptId,assignmentId:session.assignmentId,score:score,maxScore:2,completedAt:new Date().toISOString()},"*");status.textContent="أُرسلت النتيجة: "+score+" / 2."})}());
+</script>
+</body>
+</html>
