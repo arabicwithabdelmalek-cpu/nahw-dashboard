@@ -20,6 +20,51 @@
     throw new Error("لا يمكن إنشاء معرّف آمن في هذا المتصفح.");
   }
 
+  // Compatibility adapter for the older self-grading Claude homework format.
+  // Never enable direct Supabase access from an untrusted HTML iframe.
+  function addLegacyHomeworkBridge(html) {
+    if (!/function\s+makeCode\s*\(/.test(html) ||
+        !/function\s+sendResult\s*\(/.test(html) ||
+        !/NAHW_PREFILL/.test(html) ||
+        !/S\.result\.pct/.test(html)) return html;
+    var shim = [
+      "(function(){",
+      "  var platform=null, sent=false;",
+      "  if(typeof CONFIG!=='undefined') CONFIG.requireCode=false;",
+      "  window.addEventListener('message',function(event){",
+      "    var data=event.data;",
+      "    if(event.source!==window.parent || !data || data.type!=='EDU_PLATFORM_INIT' || data.version!=='1.0' ||",
+      "       typeof data.attemptId!=='string' || typeof data.assignmentId!=='string') return;",
+      "    platform={attemptId:data.attemptId,assignmentId:data.assignmentId};",
+      "    var nm=document.getElementById('nm'), cd=document.getElementById('cd');",
+      "    if(nm && data.context && typeof data.context.displayName==='string'){",
+      "      nm.value=data.context.displayName; nm.readOnly=true;",
+      "    }",
+      "    if(cd){cd.value=''; cd.disabled=true;}",
+      "  });",
+      "  sendResult=function(){",
+      "    var box=document.getElementById('send');",
+      "    if(!platform || typeof S==='undefined' || !S || !S.result ||",
+      "       typeof QUESTIONS==='undefined' || !QUESTIONS.length){",
+      "      if(box) box.textContent='تعذر إرسال النتيجة. أغلق النشاط وافتحه من حسابك مرة أخرى.';",
+      "      return;",
+      "    }",
+      "    if(sent) {if(box) box.textContent='أُرسلت هذه المحاولة بالفعل. افتح النشاط مجددًا لمحاولة جديدة.';return;}",
+      "    sent=true;",
+      "    window.parent.postMessage({",
+      "      type:'EDU_ACTIVITY_RESULT',version:'1.0',attemptId:platform.attemptId,",
+      "      assignmentId:platform.assignmentId,score:S.result.ok,maxScore:QUESTIONS.length,",
+      "      completedAt:new Date().toISOString()",
+      "    },'*');",
+      "    if(box){box.className='send pend';box.textContent='أُرسلت النتيجة إلى المنصة. انتظر إشعار تأكيد الحفظ بالأعلى.';}",
+      "  };",
+      "})();"
+    ].join("\n");
+    var script = "<script>" + shim + "</script>";
+    return /<\/body\s*>/i.test(html) ?
+      html.replace(/<\/body\s*>/i, script + "</body>") : html + script;
+  }
+
   function secureDocument(html) {
     // This policy is deliberately restrictive: preview only supports self-contained HTML.
     // It does not grant network requests or any access to the parent application's origin.
@@ -135,7 +180,7 @@
         version: VERSION,
         attemptId: attemptId,
         assignmentId: assignmentId,
-        context: { displayName: "متعلم تجريبي" }
+        context: { displayName: (options && options.context && typeof options.context.displayName === "string") ? options.context.displayName.slice(0, 120) : "متعلم تجريبي" }
       }, "*");
     });
     body.appendChild(iframe);
@@ -150,7 +195,7 @@
     };
     window.addEventListener("message", onMessage);
     window.addEventListener("keydown", onKeydown);
-    iframe.srcdoc = secureDocument(html);
+    iframe.srcdoc = secureDocument(addLegacyHomeworkBridge(html));
     overlay.querySelector("[data-preview-close]").focus();
 
     return { attemptId: attemptId, assignmentId: assignmentId };
