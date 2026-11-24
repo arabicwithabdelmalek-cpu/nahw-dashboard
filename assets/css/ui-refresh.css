@@ -384,10 +384,12 @@ summary:focus-visible,
 
   .mtop .link{
     flex:none;
-    min-height:40px;
-    padding:4px;
+    min-height:44px;
+    padding:6px;
     font-size:12.5px;
   }
+
+  .btn.sm,.iconbtn{min-height:44px}
 
   .ph{gap:10px;margin-bottom:18px}
   .ph h1,.activity-hub-head h1{font-size:22px;line-height:1.55}
