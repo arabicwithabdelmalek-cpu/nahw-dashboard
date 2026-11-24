@@ -62,6 +62,7 @@
 
 .student-brand{
   min-width:0;
+  min-height:44px;
   display:inline-flex;
   align-items:center;
   gap:12px;
@@ -810,7 +811,7 @@
 }
 
 .student-code{
-  min-height:36px;
+  min-height:44px;
   padding:5px 9px;
   border:1px solid rgba(255,255,255,.2);
   border-radius:8px;
@@ -951,7 +952,7 @@
   .student-brand b{max-width:112px;font-size:11px}
   .student-user{display:none}
   .student-top-actions{gap:6px}
-  .student-lang-button,.student-logout{min-height:42px;padding-inline:9px}
+  .student-lang-button,.student-logout{min-height:44px;padding-inline:9px}
   .student-hero{padding-inline:20px}
   .student-hero-actions{align-items:flex-start;flex-direction:column}
   .student-hero-button{width:100%}
