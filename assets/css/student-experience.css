@@ -114,6 +114,7 @@
 
 .student-lang-button,
 .student-logout{
+  min-width:44px;
   min-height:44px;
   padding:9px 13px;
   border:1px solid var(--student-line);
