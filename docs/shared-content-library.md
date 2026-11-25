@@ -1,0 +1,3 @@
+# Shared content library
+
+Database migration `shared_content_library` creates `edu_content_folders`, adds nullable `edu_lessons.folder_id`, and exposes invoker RPCs for listing, creating folders, uploading, moving and assigning existing content. Folder creation is admin-only; authenticated staff may upload content and assign only to classes authorized by `owns_class`. Existing lesson/assignment IDs and results remain unchanged. Files saved by older upload flow remain in the root. Assignment uniqueness prevents duplicate rows. HTML preview and grading protocol remain unchanged. Database integration test (admin role, transactional rollback) verified nested folders, upload, list, assignment deduplication and move.

@@ -149,7 +149,15 @@
           });
         } catch (e) { return Promise.reject(e); }
       },
-      classResults: function (assignmentId) {
+      library: function () { return call("edu_library_list", {}); },
+    createFolder: function (parentId,name) { return call("edu_library_create_folder",{p_parent_id:parentId||null,p_name:requireText(name,"اسم المجلد",100)}); },
+    uploadLibrary: function (request) {
+      if (!["lesson","homework","exam"].includes(request.kind)) throw new Error("نوع الملف غير صالح.");
+      return call("edu_library_upload",{p_folder_id:request.folderId||null,p_kind:request.kind,p_title:requireText(request.title,"العنوان",140),p_html:checkHtml(request.html)});
+    },
+    assignLibrary: function (lessonId,classId) { return call("edu_library_assign",{p_lesson_id:ensureIdentifier(lessonId,"الملف"),p_class_id:ensureIdentifier(classId,"الفصل")}); },
+    moveLibrary: function (lessonId,folderId) { return call("edu_library_move",{p_lesson_id:ensureIdentifier(lessonId,"الملف"),p_folder_id:folderId||null}); },
+    classResults: function (assignmentId) {
         if (!enabled) return Promise.reject(errorForBackend());
         try { return call(RPC.classResults, {p_assignment_id:ensureIdentifier(assignmentId,"معرّف النشاط")}); }
         catch (e) { return Promise.reject(e); }
