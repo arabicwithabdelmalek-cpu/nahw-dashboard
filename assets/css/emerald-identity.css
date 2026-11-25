@@ -1,0 +1,78 @@
+/* Emerald & Ivory — shared visual identity, independent of data and application logic. */
+:root{--bg:#f4f2ea;--card:#fff;--ink:#102f29;--muted:#5b6e64;--faint:#65776d;--line:#e2dfd4;--accent:#206b53;--accent-ink:#16543f;--accent-strong:#102f29;--soft:#e8f0e9;--nav:#102f29;--nav-deep:#0c2822;--nav-text:#e7eee5;--focus:rgba(32,107,83,.3);--shadow-sm:0 1px 2px #102f2908;--shadow-md:0 8px 28px #102f2908;--shadow-lg:0 20px 50px #102f2919;--r:16px}
+html,body,.shell,.main{background:var(--bg);color:var(--ink)}
+::selection{background:#e7d8b4;color:#102f29}
+.side{background:#102f29;box-shadow:none;border:0}
+.side .brand{border-bottom:1px solid #ffffff20;padding-bottom:22px;margin-bottom:12px}
+.side .brand b{color:#f4f2ea;font-weight:800}.side .brand small,.side .me{color:#b9c9c0}
+.nav{color:#c6d7cb;border-radius:10px;min-height:46px}
+.nav.on{background:#206b5359;color:#fff;border-color:transparent;border-inline-start-color:#c6a66d}
+.nav:hover{background:#ffffff12;color:white}.nav .badge{background:#c6a66d;color:#102f29}
+.side .me{border-top-color:#ffffff20}.side .me button{color:#d6e3d9}
+.main{padding-block-start:30px}.wrap{max-width:1320px}
+.ph h1,.activity-hub-head h1{font-family:"Noto Kufi Arabic","Cairo",sans-serif;font-size:clamp(23px,2.4vw,31px);line-height:1.65;color:#102f29;font-weight:700}
+.ph .sub{color:var(--muted)}
+.btn{border-radius:10px;transition:background-color .2s,transform .2s,box-shadow .2s}
+.btn:not(.ghost):not(.danger):not(:disabled){background:#206b53;color:#fff}
+.btn:not(.ghost):not(.danger):hover{background:#16543f;box-shadow:0 5px 16px #102f2920}
+.btn.ghost{color:#206b53;border-color:#d9dfd5;background:#fff}
+.btn.ghost:hover,.iconbtn:hover{background:#e8f0e9;border-color:#a9c4b1;color:#16543f}
+.card,.activity-library,.activity-publish{background:#fff;border:1px solid #e2dfd4;box-shadow:var(--shadow-sm);border-radius:16px}
+.card h2{color:#102f29}
+.kpi{min-height:112px;padding:18px 20px;border-radius:14px;background:#fff}
+.kpi:before{background:#206b53;inset-block:16px}
+.kpi:nth-child(2):before,.kpi:nth-child(4):before{background:#c6a66d}
+.kpi b{color:#102f29;font-size:clamp(23px,2.8vw,34px);font-weight:800}
+.kpi small{color:#5b6e64}
+.kpi .note{color:#65776d}
+.ccard:hover{border-color:#9fbdae;box-shadow:0 8px 24px #102f2910}
+.ccard .meta,.tbl td,.tbl th{border-color:#e8e7de}
+.tbl th{background:#f7f6f0;color:#56675e}
+.tbl tr.click:hover td{background:#edf3eb}
+.empty{background:#f8f7f2;color:#5b6e64}
+.code,.seg{background:#efeee7;border-color:#e2dfd4}
+.inp,.filters select{border-color:#dcded3}.inp:hover,.filters select:hover{border-color:#a9c4b1}
+.inp:focus,.filters select:focus{border-color:#206b53;box-shadow:0 0 0 3px #206b531c}
+.drop{background:#f6f8f2;border-color:#a9bba8}
+.link{color:#206b53}.modal-bg{background:#102f2966}
+.login{background:radial-gradient(ellipse at 14% 10%,#e8ddc5,transparent 42%),radial-gradient(ellipse at 85% 85%,#d7e6d9,transparent 45%),#f4f2ea}
+.login .box{width:min(100%,900px);max-width:900px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;gap:36px}
+.login .box .brand{padding:28px 18px;text-align:center}
+.login .box .brand::before{content:"";display:block;width:100%;max-width:260px;aspect-ratio:260/173;margin:0 auto 20px;border-radius:12px;background:#e6ddcb url("../images/editorial-hero.webp") center/cover no-repeat;box-shadow:0 12px 25px #102f2919}
+.login .brand b{color:#102f29;font-size:clamp(23px,2.6vw,31px)}
+.login .card{box-shadow:0 14px 48px #102f2915;border-color:#e2dfd4}
+.student-portal{--student-navy:#102f29;--student-navy-soft:#1a493b;--student-blue:#206b53;--student-blue-dark:#16543f;--student-mint:#206b53;--student-gold:#c6a66d;--student-ink:#102f29;--student-muted:#5b6e64;--student-paper:#f4f2ea;--student-card:#fff;--student-line:#e2dfd4}
+.student-brand-mark{background:#102f29;color:#f4f2ea;box-shadow:inset 0 -4px 0 #c6a66d}
+.student-topbar{background:#fffefaef;border-bottom-color:#e2dfd4}
+.student-avatar{border-color:#d9e7da;background:#e8f0e9;color:#206b53}
+.student-lang-button:hover,.student-logout:hover{background:#e8f0e9;color:#206b53;border-color:#a9c4b1}
+.student-hero{background:linear-gradient(120deg,#102f29 15%,#164638 70%,#206b53);box-shadow:0 10px 28px #102f2917;border-radius:21px!important;min-height:280px}
+.student-hero::before{background:#c6a66d}
+.student-hero-glyph{inset-inline-start:auto;inset-inline-end:0;inset-block:0;width:47%;height:100%;color:transparent;transform:none;opacity:.24;background:url("../images/editorial-hero.webp") center/cover no-repeat;mask-image:linear-gradient(to left,#000 45%,transparent);font-size:0}
+.student-portal[dir="ltr"] .student-hero-glyph{mask-image:linear-gradient(to right,#000 45%,transparent)}
+.student-eyebrow{color:#ebd9b8;border-color:#c6a66d77}
+.student-hero p,.student-hero-note,.student-hero-actions>span,.student-progress-ring span{color:#d6e4d9}
+.student-hero-button{background:#c6a66d;color:#102f29;box-shadow:none}
+.student-hero-button:hover{background:#d7bb86;color:#102f29}
+.student-primary-button,.student-task-button{background:#206b53;color:white;box-shadow:none}
+.student-primary-button:hover,.student-task-button:hover{background:#16543f}
+.student-progress-ring{background:conic-gradient(#c6a66d calc(var(--student-progress) * 1%),#ffffff24 0)}
+.student-progress-ring::before{background:#1a493b}
+.student-stats{box-shadow:0 8px 24px #102f290a;border-color:#e2dfd4}
+.student-stat-icon.average,.student-achievement-icon{background:#f0e6d0;color:#7b6033}
+.student-stat-icon.attempts,.student-stat-icon.solved{background:#e5efe5;color:#206b53}
+.student-learning-panel,.student-side-card{box-shadow:none;border-radius:17px!important}
+.student-section-head{background:#faf9f4;border-color:#e2dfd4}
+.student-path::before{background:#dce5d9}
+.student-path-node{background:#eee9de;color:#5b6e64;box-shadow:0 0 0 1px #e2dfd4}
+.student-assignment.done .student-path-node{background:#206b53;color:white;box-shadow:0 0 0 1px #206b53}
+.student-assignment-body:hover{border-color:#9fbdae;box-shadow:0 6px 18px #102f290b}
+.student-state.pending,.student-review-link,.student-side-card.activity-card a{background:#e9f1e8;color:#16543f;border-color:#c8dbcd}
+.student-review-link:hover,.student-side-card.activity-card a:hover{background:#dceadc;border-color:#a9c4b1}
+.student-achievement{background:#f7f6f0}
+.student-side-card.class-card{background:#102f29;border-color:#102f29}
+.student-class-label,.student-side-card dt{color:#b9c9c0}
+.student-path-empty span{background:#e8f0e9;color:#206b53}
+@media(min-width:861px){.ph:has(+.kpis.g4){padding:21px 25px;border-radius:16px;background:linear-gradient(125deg,#102f29,#206b53);color:#fff}.ph:has(+.kpis.g4) h1{color:#fff}.ph:has(+.kpis.g4) .sub{color:#d6e3d9}.ph:has(+.kpis.g4) .btn.ghost{background:#c6a66d;color:#102f29;border:0}}
+@media(max-width:860px){.mtop{background:#f4f2eaf5;border-bottom-color:#e2dfd4}.tabbar{border-top-color:#e2dfd4}.tabbar a.on{background:#e8f0e9;color:#206b53}.main{padding-block-start:0}.ph h1{font-size:23px}.login .box{max-width:440px;grid-template-columns:1fr;gap:8px}.login .box .brand{padding:8px 0 10px}.login .box .brand::before{max-width:142px;margin-bottom:9px}.student-hero{min-height:0}.student-hero-glyph{opacity:.16}}
+@media(prefers-reduced-motion:no-preference){.card,.student-learning-panel,.student-hero,.student-side-card{animation:emerald-enter .28s ease-out both}@keyframes emerald-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
